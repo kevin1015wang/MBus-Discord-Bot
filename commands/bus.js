@@ -152,7 +152,7 @@ module.exports = {
                 warning = '\n\n⚠️ I recommend getting to the bus stop **now.**'
             }
 
-            //Comment
+            //Comment2
 
             message.channel.send({ embed: {
                 color: 15844367,

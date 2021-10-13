@@ -158,7 +158,7 @@ module.exports = {
                     name: 'Next Bus',
                     icon_url: 'https://i.ibb.co/qsKg98d/UMich-logo-modified.png',
                 },
-                description: 'Hi ' + message.author.username + '! 👋\n\nThe next bus will arrive at the stop in: \n**Baits II: ** `' + wait + '` minute(s)' + '\n**Bursley: ** ' + '`' + (wait + 1) + '`' + ' minute(s)' + warning,
+                description: 'Hi ' + message.author.username + '! 👋\n\nThe next bus will arrive at the stop in: \n**Baits II: ** `' + (wait - 1) + '` minute(s)' + '\n**Bursley: ** ' + '`' + (wait) + '`' + ' minute(s)' + warning,
 
                 footer: {
 					text: 'All stop times approximate. Data from LTP stop times PDF.',

@@ -1,42 +1,52 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
-//comment1
+
 module.exports = {
-	name: 'pierpont',
-	description: 'Gives Pierpont CCTC stop times',
-	execute(message, args) {
-		
-        let url = "https://mbus.ltp.umich.edu/bustime/api/v3/getpredictions?key=mrBJV8guVpvDc4FvtQ2xHhBjY&stpid=N553&format=json";
+	data: new SlashCommandBuilder()
+		.setName('pierpont')
+		.setDescription('When the next buses arrive at Pierpont.'),
+	async execute(interaction) {
 
-        let settings = { method: "Get" };
+        //Warning message
+        warning = '';
 
-        fetch(url, settings)
-            .then(res => res.json())
-            .then((json) => {
+		//Get Data for stop at bottom
 
-                wait1 = json['bustime-response']['prd'][0]['prdctdn'];
-                wait2 = json['bustime-response']['prd'][1]['prdctdn'];
+        const response1 = await fetch('https://mbus.ltp.umich.edu/bustime/api/v3/getpredictions?key=mrBJV8guVpvDc4FvtQ2xHhBjY&stpid=N553&format=json');
+        const stop1 = await response1.json();
 
-                warning = '';
+        wait1 = stop1['bustime-response']['prd'][0]['prdctdn'];
+		line1 = stop1['bustime-response']['prd'][0]['rt'];
 
-                if (wait1 <= 4) {
-                    warning = '\n\n⚠️ I recommend getting to the bus stop **now.**'
-                }
-                
-                message.channel.send({ embed: {
-                    color: 15844367,
-                    author: {
-                        name: 'Next Bus',
-                        icon_url: 'https://i.ibb.co/qsKg98d/UMich-logo-modified.png',
-                    },
-                    description: 'Hi ' + message.author.username + '! 👋\n\n**The next CC will arrive at Pierpont in:** \n`' + wait1 + '` minute(s)\n\n**If you miss that, then the bus after that will be in:**\n`' + wait2 + "` minute(s)" + warning,
-    
-                    footer: {
-                        text: 'All stop times approximate. Data from UMich BusTime API.',
-                    },
-                } });
-            });
+		//Get Data for side stop
 
+		const response2 = await fetch('https://mbus.ltp.umich.edu/bustime/api/v3/getpredictions?key=mrBJV8guVpvDc4FvtQ2xHhBjY&stpid=N551&format=json');
+        const stop2 = await response2.json();
 
+		wait2 = stop2['bustime-response']['prd'][0]['prdctdn'];
+		line2 = stop2['bustime-response']['prd'][0]['rt'];
+
+		//Get Data for stop to North
+
+		const response3 = await fetch('https://mbus.ltp.umich.edu/bustime/api/v3/getpredictions?key=mrBJV8guVpvDc4FvtQ2xHhBjY&stpid=N550&format=json');
+        const stop3 = await response3.json();
+
+		wait3 = stop3['bustime-response']['prd'][0]['prdctdn'];
+		line3 = stop3['bustime-response']['prd'][0]['rt'];
+
+		wait4 = stop3['bustime-response']['prd'][1]['prdctdn'];
+		line4 = stop3['bustime-response']['prd'][1]['rt'];
+
+            //Comment2
+
+            const arrival = new MessageEmbed()
+			    .setColor('#FBCE33')
+			    .setAuthor('Next Bus', 'https://i.ibb.co/qsKg98d/UMich-logo-modified.png')
+			    .setDescription('Hi ' + `${interaction.user.username}` + '! 👋\n\nHere will be the next buses at Pierpont:\n\n**Towards Central Campus:**\n\n**Bus 1:**\nRoute: `' + line1 + '`\nTime: `' + wait1 + '` minute(s)\n\n**Bus 2:**\nRoute: `' + line2 + '`\nTime: `' + wait2 + '` minute(s)\n\n' + '**Towards North Campus:**\n\n**Bus 1:**\nRoute: `' + line3 + '`\nTime: `' + wait3 + '` minute(s)\n\n**Bus 2:**\nRoute: `' + line4 + '`\nTime: `' + wait4 + '` minute(s)')
+                .setFooter('All stop times approximate. Data from UMich BusTime API.')
+            
+            await interaction.reply({ ephemeral: true, embeds: [arrival] });
+            
 	},
 };
-    
